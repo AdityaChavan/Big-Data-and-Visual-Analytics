@@ -1,0 +1,1 @@
+A log scale is  used for data with skewness towards large values and to show a multiplicative relationship between data points. A sq. root scale is used for exponentially growing data. In summary, whichever scale leads to a equal spread of data and minimum skew should be used.

@@ -1,0 +1,11 @@
+Average Degree: 1.12
+The source user and his 20 primary friends have 20 nodes each, but each of their 20 friend and follower have 1 node connected each. Thus the average becomes slightly more than 1.
+
+Network Diameter: 4(undirected) 6(directed)
+The path with maximum eccentricity =2nd friend->primary_friend->Source_user->other primary_friend->2nd_friend..thus getting path legth as 4. Similarly for directed, where direction is also counted.
+
+Average Path length: 3.879 
+As explained above the maximum shortest distance is around 6, while the minimum is around 1. The average comes out between the two, as 3.8 
+
+Graph Density: 0.002
+Density=Edges/(vertices*(vertices-1)) as the number of edges is 737 and nodes is 658; 737/(658*657) is 0.0017.

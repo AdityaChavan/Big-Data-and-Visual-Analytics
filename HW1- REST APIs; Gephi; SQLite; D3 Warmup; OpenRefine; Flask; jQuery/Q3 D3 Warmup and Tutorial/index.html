@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>achavan7</title>
+        <script type="text/javascript" src="d3/d3.v3.min.js"></script>
+
+	<style type="text/css">	
+			div.x_coordinate {
+				display: inline-block;
+				width: 20px;
+				height: 20px;
+				margin-right: 2px;
+				background-color: teal;
+			}
+			.axis path,
+			.axis line{fill:none;stroke:black;shape-rendering:crspEdges;}
+			.axis text{font-family:sans-serif;font-size:11px;}
+	</style>	
+    </head>
+    <body>
+	<h1>ADITYA CHAVAN</h1>
+        <script type="text/javascript">
+		d3.select("body").append("p").text(dataset);
+		var dataset=new Array();
+		var dataset2=new Array();
+		var max_x=0;
+		var max_y=0;
+		var padding = 25;
+		var w=500;
+		var h=500;
+		var avg_x=0;
+		for(var i=0;i<25;i++)
+			{
+			var array=new Array();
+			var array1=new Array();
+			var newNumber_x = Math.random()*101;
+			var newNumber_y = Math.random()*101;
+			var newNumber_x1 = Math.random()*101;
+			var newNumber_y1 = Math.random()*101;
+
+			if(newNumber_x>100)newNumber_x=100;
+			else if(newNumber_y>100)newNumber_y=100;
+			else if(newNumber_x1>100)newNumber_x1=100;
+			else if(newNumber_y1>100)newNumber_y1=100;
+			
+
+			array.push(newNumber_x);
+			array.push(newNumber_y);
+			dataset.push(array);
+			
+			array1.push(newNumber_x1);
+			array1.push(newNumber_y1);
+			dataset2.push(array1);
+
+			if(newNumber_x>max_x){max_x=newNumber_x;}
+			if(newNumber_y>max_y){max_y=newNumber_y;}
+			if(newNumber_x1>max_x){max_x=newNumber_x1;}
+			if(newNumber_y1>max_y){max_y=newNumber_y1;}
+			avg_x=newNumber_x+newNumber_x1+avg_x;
+			
+			}
+			avg_x=avg_x/50;
+		var x = d3.scale.linear().domain([0, max_x]).range([ padding,w-padding*2]);
+		var y = d3.scale.linear().domain([0, max_y]).range([ h-padding,padding]);
+		var xAxis = d3.svg.axis().scale(x).orient('bottom');
+		var yAxis = d3.svg.axis().scale(y).orient('left');
+		
+		
+		var svg=d3.select("body").append("svg").attr("width",w).attr("height",h);
+		
+		svg.append('g').attr('transform', "translate(0," + (h - padding) + ")").attr('class', 'main axis date1').call(xAxis);
+		svg.append('g').attr("transform", "translate(" + padding + ",0)").attr('class', 'main axis date2').call(yAxis);
+		var g = svg.append("svg:g"); 
+
+
+
+
+		svg.selectAll(".point")
+      .data(dataset).enter().append('path')
+      .attr("d", d3.svg.symbol().type("triangle-up").size(function(d){ return (d[0]*45/max_x)+5; }))
+	  .attr("transform", function(d) { return "translate(" + x(d[0]) + "," + y(d[1]) + ")"; })
+	  .style('fill', 'white').attr('stroke',function(d){if(d[0]>avg_x)return '#00F'; else return '#0F0';}).attr('stroke-width',1);
+      
+
+
+
+
+
+		svg.selectAll(".point")
+      .data(dataset2).enter().append('path')
+      .attr("d", d3.svg.symbol().type("circle").size(function(d){ return (d[0]*45/100)+5; }))
+	  .attr("transform", function(d) { return "translate(" + x(d[0]) + "," + y(d[1]) + ")"; })
+	  .style('fill', 'white').attr('stroke',function(d){if(d[0]>avg_x)return '#00F'; else return '#0F0';}).attr('stroke-width',1);
+      
+		
+		
+		
+        </script>
+	
+    </body>
+
+
+</html> 

@@ -1,0 +1,1 @@
+The weight of each node varies from 1 to about 7. Hence scaling linearly is the best option. The square root of degree would only vary the size from 1 to 3, thus not making the difference clearly distinguishable.

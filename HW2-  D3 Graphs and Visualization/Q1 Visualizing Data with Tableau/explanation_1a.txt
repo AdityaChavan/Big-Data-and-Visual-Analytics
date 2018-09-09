@@ -1,0 +1,9 @@
+1.	Decimal places reduced to 2 or lesser.
+
+2.	The columns with text are left aligned and the ones with numbers are left aligned.
+
+3.	All rows arranged in order of place achieved in competition. 
+
+4.	No gridlines, colours or fills.
+
+5.	Header row made bigger.

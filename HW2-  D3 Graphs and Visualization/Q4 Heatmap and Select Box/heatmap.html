@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+<style>
+.tile {
+  shape-rendering:crispEdges;
+}
+.axis path,
+			.axis line{fill:none;stroke:none;shape-rendering:crspEdges;}
+			.axis text{font-family:sans-serif;font-size:17px;}
+			.selector {position:absolute;margin-left:400px;margin-top:0px}
+</style>
+<body>
+ <script type="text/javascript" src="../lib/d3.v3.min.js"></script>
+<script>
+
+
+d3.csv("heatmap.csv", function(error, data) {
+  if (error) throw error;
+var select_data = ["Season 1","Season 2","Season 3","Season 4","Season 5","Season 6"];
+var selectValue="Season 1";
+	
+	var select = d3.select('body').append('select').attr('class','select')
+	.attr("class","selector")
+	.on('change',onchange);
+	
+	var options = select.selectAll('option')
+	.data(select_data).enter()
+	.append('option')
+		.text(function (d) { return d; });
+var selVal;
+function onchange() {
+	selectValue = d3.select('select').property('value')
+	if(selectValue=="Season 1")
+	selVal=1;
+	else if(selectValue=="Season 2")
+	selVal=2;
+	else if(selectValue=="Season 3")
+	selVal=3;
+	else if(selectValue=="Season 4")
+	selVal=4;
+	else if(selectValue=="Season 5")
+	selVal=5;
+	else if(selectValue=="Season 6")
+	selVal=6;
+	else selVal=0;
+	
+	updateHeatMap(selVal);
+	
+};
+  // Coerce the CSV data to the appropriate types.
+  data.forEach(function(d) {
+  d.Baratheon=+d.Baratheon;
+  d.Greyjoy=+  d.Greyjoy;
+  d.Lannister=+  d.Lannister;
+  d.Stark=+  d.Stark;
+  d.Targaryen=+  d.Targaryen;
+  d.Tyrell=+  d.Tyrell;
+  d.episode=+  d.episode;
+  d.season=+d.season;
+  
+  });
+
+	var margin = {top: 30, right: 10, bottom: 200, left: 10},
+    width = 800- margin.left - margin.right,
+    height = 800- margin.top - margin.bottom;
+
+	var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+	
+	var tilesize=65;
+	var offset=1.05*tilesize;
+
+
+
+  svg.selectAll(".tile")
+      .data(data).enter()
+	  .append("rect").filter(function(d){ return d.season==1; })
+	  .attr("class", "tile1")
+      .attr("x", function(d) { return d.episode*offset+50; })
+      .attr("y", function(d) { return offset*0; })
+      .attr("width", tilesize)
+      .attr("height", tilesize)
+      .style("fill",function(d){return selectColor(d.Baratheon)});
+ 
+ svg.selectAll(".tile")
+      .data(data).enter()
+	  .append("rect").filter(function(d){ return d.season==1; })
+      .attr("class", "tile2")
+      .attr("x", function(d) { return d.episode*offset +50; })
+      .attr("y", function(d) { return offset*1; })
+      .attr("width", tilesize)
+      .attr("height", tilesize)
+      .style("fill",function(d){return selectColor(d.Greyjoy)});
+ 
+ svg.selectAll(".tile")
+      .data(data).enter()
+	  .append("rect").filter(function(d){ return d.season==1; })
+      .attr("class", "tile3")
+      .attr("x", function(d) { return d.episode*offset +50; })
+      .attr("y", function(d) { return offset*2; })
+      .attr("width", tilesize)
+      .attr("height", tilesize)
+      .style("fill",function(d){return selectColor(d.Lannister)});
+ 
+svg.selectAll(".tile")
+      .data(data).enter()
+	  .append("rect").filter(function(d){ return d.season==1; })
+      .attr("class", "tile4")
+      .attr("x", function(d) { return d.episode*offset +50; })
+      .attr("y", function(d) { return offset*3; })
+      .attr("width", tilesize)
+      .attr("height", tilesize)
+      .style("fill",function(d){return selectColor(d.Stark)});
+ 
+ svg.selectAll(".tile")
+      .data(data).enter()
+	  .append("rect").filter(function(d){ return d.season==1; })
+      .attr("class", "tile5")
+      .attr("x", function(d) { return d.episode*offset +50; })
+      .attr("y", function(d) { return offset*4; })
+      .attr("width", tilesize)
+      .attr("height", tilesize)
+      .style("fill",function(d){return selectColor(d.Targaryen)});
+
+	  svg.selectAll(".tile")
+      .data(data).enter()
+	  .append("rect").filter(function(d){ return d.season==1; })
+      .attr("class", "tile6")
+      .attr("x", function(d) { return d.episode*offset +50; })
+      .attr("y", function(d) { return offset*5; })
+      .attr("width", tilesize)
+      .attr("height", tilesize)
+      .style("fill",function(d){return selectColor(d.Tyrell)});
+ 
+		//*/
+		
+var initpos=margin.top+15;
+
+//data.forEach(function(row){
+//console.log(Object.keys(row));
+//});
+//	console.log(Object.keys(dataValues));
+
+		var x = d3.scale.linear().domain([1,10]).range([offset*2+margin.left,width-margin.left]);
+		var y = d3.scale.linear().domain([1,6]).range([ height-200,margin.top+10]);
+		var z = d3.scale.linear().domain([0,10]);
+		var intervals=[0,2,4,6,8,12,19,25,32];
+		
+	
+	
+		var count=6;
+		var dataValues=d3.values(data)[0];
+		var colmn=Object.keys(dataValues);
+		
+		var xAxis = d3.svg.axis().scale(x).orient('bottom');
+		var yAxis = d3.svg.axis().scale(y).tickFormat(function(d) { count=count-1;return colmn[count]; }).orient('left').ticks(6);
+	
+		svg.append('g').attr('transform', "translate(0," + (height-150 ) + ")").attr('class', 'main axis date1').call(xAxis);
+		svg.append('g').attr("transform", "translate(" + (offset+margin.left+20)+ ",0)").attr('class', 'main axis date2').call(yAxis);
+		
+		svg.append("text").attr("dx", "1em").attr("transform","translate(" + (width/2) + " ," +( height-offset-30) + ")").style("text-anchor", "middle")
+      .text("Episode").style("font", "20px Arial Black");//Xaxis
+	  
+		svg.append("text").attr("transform", "rotate(-90)").attr("dx", "1em").attr("y", margin.left).attr("x",-offset*3.5).style("text-anchor", "middle")
+      .text("House").style("font", "20px Arial Black");//Yaxis
+	  
+	  
+	 var legend = svg.selectAll(".legend")
+      .data(intervals)
+    .enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) { return "translate(" + (50+(offset+10)*i) + "," + (height-offset+25) + ")"; });
+	
+	legend.append("rect")
+      .attr("width", tilesize+10)
+      .attr("height", 20)
+      .style("fill", function(d,i){return selectColor(selectText()*i)});
+
+	legend.append("text")
+      .attr("x", -10)
+      .attr("y", 35)
+      .attr("dx", ".35em")
+      .text(function(d,i){return Math.floor(selectText()*i)});
+
+	  svg.append("text")
+      .attr("x", width/3+35)
+      .attr("y", height-50).text("Number of Appereances").style("font", "15px Arial Black");
+     
+	
+	function selectText() {
+// console.log(d);
+season_interval=38;
+if((selVal)==1)season_interval=38;
+else if((selVal)==2)season_interval=31;
+else if((selVal)==3)season_interval=33;
+else if((selVal)==4)season_interval=44;
+else if((selVal)==5)season_interval=26;
+else if((selVal)==6)season_interval=31;
+ 
+return season_interval/9;
+} 
+	  
+ function selectColor(d) {
+// console.log(d);
+season_interval=38;
+if((selVal)==1)season_interval=38;
+else if((selVal)==2)season_interval=31;
+else if((selVal)==3)season_interval=33;
+else if((selVal)==4)season_interval=44;
+else if((selVal)==5)season_interval=26;
+else if((selVal)==6)season_interval=31;
+
+if(d<season_interval/9)
+ return "#ffffd9";//1
+else if(d<season_interval/9*2)
+return "#edf8b1";//2
+else if(d<season_interval/9*3)
+return "#c7e9b4";//3
+else if(d<season_interval/9*4)
+return "#7fcdbb";//4
+else if(d<season_interval/9*5)
+return "#41b6c4";//5
+else if(d<season_interval/9*6)
+return "#1d91c0";//6
+else if(d<season_interval/9*7)
+return "#225ea8";//7
+else if(d<season_interval/9*8)
+return "#253494";//8
+  
+ else
+return "#081d58";//9
+
+ } 
+
+ function updateHeatMap(selVal){
+console.log(selVal);
+ if (selVal==0) throw error;
+ svg.selectAll(".tile").remove;
+ svg.selectAll(".tile").data(data).enter().append("rect").attr("shape-rendering","crispEdges")
+	  .filter(function(d){ return d.season==selVal; })
+	  .attr("class", "tile1").attr("x", function(d) { return d.episode*offset+50; }).attr("y", function(d) { return offset*0; }).attr("width", tilesize).attr("height", tilesize).style("fill",function(d){return selectColor(d.Baratheon)});
+ 
+	svg.selectAll(".tile").data(data).enter().append("rect").attr("shape-rendering","crispEdges")
+	.filter(function(d){ return d.season==selVal; }).attr("class", "tile2").attr("x", function(d) { return d.episode*offset +50; }).attr("y", function(d) { return offset*1; }).attr("width", tilesize).attr("height", tilesize).style("fill",function(d){return selectColor(d.Greyjoy)});
+ 
+	svg.selectAll(".tile").data(data).enter().append("rect").attr("shape-rendering","crispEdges")
+	.filter(function(d){ return d.season==selVal; }).attr("class", "tile3").attr("x", function(d) { return d.episode*offset +50; }).attr("y", function(d) { return offset*2; }).attr("width", tilesize).attr("height", tilesize).style("fill",function(d){return selectColor(d.Lannister)});
+ 
+	svg.selectAll(".tile").data(data).enter().append("rect").attr("shape-rendering","crispEdges")
+	.filter(function(d){ return d.season==selVal; }) .attr("class", "tile4")      .attr("x", function(d) { return d.episode*offset +50; })     .attr("y", function(d) { return offset*3; })     .attr("width", tilesize).attr("height", tilesize).style("fill",function(d){return selectColor(d.Stark)});
+ 
+	svg.selectAll(".tile").data(data).enter().append("rect").attr("shape-rendering","crispEdges")
+	.filter(function(d){ return d.season==selVal; }).attr("class", "tile5").attr("x", function(d) { return d.episode*offset +50; }).attr("y", function(d) { return offset*4; }).attr("width", tilesize).attr("height", tilesize).style("fill",function(d){return selectColor(d.Targaryen)});
+
+	svg.selectAll(".tile").data(data).enter().append("rect").attr("shape-rendering","crispEdges")
+	.filter(function(d){ return d.season==selVal; }).attr("class", "tile6")      .attr("x", function(d) { return d.episode*offset +50; }).attr("y", function(d) { return offset*5; }).attr("width", tilesize).attr("height", tilesize) .style("fill",function(d){return selectColor(d.Tyrell)});
+ 
+ legend.selectAll("text").remove();
+ legend.append("text")
+      .attr("x", -10)
+      .attr("y", 35)
+      .attr("dx", ".35em")
+      .text(function(d,i){return Math.floor(selectText()*i)});
+
+ 
+ }
+ 
+ 
+ 
+ 
+});//data end  
+	
+</script>
+
+<body>
+<h3 style="margin-left:250px">Game of Thrones House-wise Appearences</h3>
+</body>
+</html>

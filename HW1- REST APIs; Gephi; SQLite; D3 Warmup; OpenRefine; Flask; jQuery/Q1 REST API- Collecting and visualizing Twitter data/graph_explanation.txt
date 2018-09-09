@@ -1,0 +1,1 @@
+The layout chosen was a mix of Fruchterman-Reingold(for symmetry) and Force Atlas to keep distance between 2 classes. The layer adjust selection was run briefly after. The label colours were put on a gradient to simulate a light background and highlight the central nodes. 

@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>achavan7</title>
+        <script type="text/javascript" src="../lib/d3.v3.min.js"></script>
+
+	<style type="text/css">	
+			div.x_coordinate {
+				display: inline-block;
+				width: 20px;
+				height: 20px;
+				margin-right: 2px;
+				background-color: teal;
+			}
+			.axis path,
+			.axis line{fill:none;stroke:black;shape-rendering:crspEdges;}
+			.axis text{font-family:sans-serif;font-size:11px;}
+	</style>	
+    </head>
+    <body>
+
+        <script type="text/javascript">
+		d3.select("body").append("p").text(dataset);
+		var dataset=new Array();
+		var dataset2=new Array();
+		var max_x=0;
+		var max_y=0;
+		var padding = 50;
+		var w=800;
+		var h=600;
+	
+	d3.csv("wine_quality.csv", function(data) {
+		
+		data.forEach(function(d){
+		d.residual_sugar=+d.residual_sugar;
+		d.chlorides=+d.chlorides;
+		d.free_sulfur_dioxide=+d.free_sulfur_dioxide;
+		d.total_sulfur_dioxide=+d.total_sulfur_dioxide;
+		d.Density=+d.Density;
+		d.pH=+d.pH;
+		d.sulphates=+d.sulphates;
+		d.alcohol=+d.alcohol;
+		d.quality=+d.quality;
+		
+		});
+	
+	var svg=d3.select("body").append("svg").attr("width",w).attr("height",h);
+		var x = d3.scale.linear().domain([0,14]).range([ padding,w-padding*2]);
+		var y = d3.scale.linear().domain([0,4]).range([ h-padding,padding]);
+		
+		//bad
+		svg.selectAll(".point").data(data).enter().append('path')
+	  .filter(function(d){ return d.quality<6 })
+	  .attr("d", d3.svg.symbol().type("circle")
+	  .size(function(d){ return 100; }))	  
+	  .attr("transform", function(d) { 
+	   var crossx=x(d.alcohol);
+	   var crossy=y(d.pH);
+	   return "translate(" + crossx + "," + crossy+ ")"; })
+	  .style('stroke', 'red')
+	  .style('fill','none')
+	  .attr('stroke-width',1);
+      
+	  
+	  
+		//good
+		svg.selectAll(".point")
+      .data(data).enter().append('path')
+	  .filter(function(d){ return d.quality>=6 })
+      .attr("d", d3.svg.symbol().type("cross")
+	  .size(function(d){ return 100; }))	  
+	  .attr("transform", function(d) { 
+	   var crossx=x(d.alcohol);
+	   var crossy=y(d.pH);
+	   return "translate(" + crossx + "," + crossy+ ")"; })
+	  .style('stroke', 'blue')
+	  .style('fill','none')
+	  .attr('stroke-width',1);
+      
+	var xAxis = d3.svg.axis().scale(x).orient('bottom');
+	var yAxis = d3.svg.axis().scale(y).orient('left');
+		
+		svg.append('g').attr('transform', "translate(0," + (h - padding) + ")").attr('class', 'main axis date1').call(xAxis);
+		svg.append('g').attr("transform", "translate(" + padding + ",0)").attr('class', 'main axis date2').call(yAxis);
+		
+		svg.append("text").attr("dx", "1em").attr("transform","translate(" + (w/2) + " ," +( h-padding/3) + ")").style("text-anchor", "middle")
+      .text("Alcohol");//Xaxis
+	  
+		svg.append("text").attr("transform", "rotate(-90)").attr("dx", "1em").attr("y", padding/3).attr("x",-w/2+padding).style("text-anchor", "middle")
+      .text("pH");//Yaxis
+	  
+	  svg.append("text").attr("x", (w/ 2)).attr("y", padding/3 ).attr("text-anchor", "middle").style("font-size", "16px").style("text-decoration", "underline")  
+        .text("GRAPH 1: pH vs. Alcohol");
+		
+	var symbol1=d3.svg.symbol().size(100).type("cross");
+		svg.append('path').attr('d',symbol1).style('stroke', 'blue').style('fill','none')
+		.attr("transform", function(d) {return "translate(" + 600 + "," + 10+ ")"; }) ;
+	var symbol2=d3.svg.symbol().size(100).type("circle");
+		svg.append('path').attr('d',symbol2).style('stroke', 'red').style('fill','none')
+		.attr("transform", function(d) {return "translate(" + 600 + "," + 30+ ")"; }) ;
+	 svg.append("text").attr("x", 630).attr("y", 15 ).attr("text-anchor", "middle").style("font-size", "16px")  
+        .text("Good");
+	svg.append("text").attr("x", 630).attr("y", 35 ).attr("text-anchor", "middle").style("font-size", "16px")  
+        .text("Bad");
+		
+		
+		
+		
+		//*/ //2
+		
+		var svg2=d3.select("body").append("svg").attr("width",w).attr("height",h);
+		
+		var xAxis_2 = d3.svg.axis().scale(x).orient('bottom');
+		var yAxis_2 = d3.svg.axis().scale(y).orient('left');
+		
+		svg2.append('g').attr('transform', "translate(0," + (h - padding) + ")").attr('class', 'main axis date1').call(xAxis_2);
+		svg2.append('g').attr("transform", "translate(" + padding + ",0)").attr('class', 'main axis date2').call(yAxis_2);
+		
+		//bad
+		svg2.selectAll(".point").data(data).enter().append('path').filter(function(d){ return d.quality<6 }).attr("d", d3.svg.symbol().type("circle") .size(function(d){ return 100; })).attr("transform", function(d) {  var crossa=x(d.residual_sugar);	  var crossb=y(d.pH); return "translate(" + crossa + "," + crossb+ ")"; }) .style('stroke', 'red') .style('fill','none') .attr('stroke-width',1);
+		
+		//good
+		svg2.selectAll(".point").data(data).enter().append('path') .filter(function(d){ return d.quality>=6 }).attr("d", d3.svg.symbol().type("cross").size(function(d){ return 100; })) .attr("transform", function(d) {   var crossx=x(d.residual_sugar); var crossy=y(d.pH);	  return "translate(" + crossx + "," + crossy+ ")"; }).style('stroke', 'blue').style('fill','none').attr('stroke-width',1);
+      
+	  svg2.append("text").attr("dx", "1em").attr("transform","translate(" + (w/2) + " ," +( h-padding/3) + ")").style("text-anchor", "middle")
+      .text("Residual Sugar");//Xaxis
+	  
+		svg2.append("text").attr("transform", "rotate(-90)").attr("dx", "1em").attr("y", padding/3).attr("x",-w/2+padding).style("text-anchor", "middle")
+      .text("pH");//Yaxis
+	  
+	  svg2.append("text").attr("x", (w/ 2)).attr("y", padding/3 ).attr("text-anchor", "middle").style("font-size", "16px").style("text-decoration", "underline")  
+        .text("GRAPH 2: pH vs. Residual Sugar");
+		
+		
+var symbol21=d3.svg.symbol().size(100).type("cross");
+		svg2.append('path').attr('d',symbol21).style('stroke', 'blue').style('fill','none')
+		.attr("transform", function(d) {return "translate(" + 600 + "," + 10+ ")"; }) ;
+	var symbol22=d3.svg.symbol().size(100).type("circle");
+		svg2.append('path').attr('d',symbol22).style('stroke', 'red').style('fill','none')
+		.attr("transform", function(d) {return "translate(" + 600 + "," + 30+ ")"; }) ;
+	 svg2.append("text").attr("x", 630).attr("y", 15 ).attr("text-anchor", "middle").style("font-size", "16px")  
+        .text("Good");
+	svg2.append("text").attr("x", 630).attr("y", 35 ).attr("text-anchor", "middle").style("font-size", "16px")  
+        .text("Bad");
+		
+
+		
+		//*/ //3
+		
+		
+		
+		
+		
+		var svg3=d3.select("body").append("svg").attr("width",w).attr("height",h);
+	
+		var xAxis = d3.svg.axis().scale(x).orient('bottom');
+		var yAxis = d3.svg.axis().scale(y).orient('left');
+		
+		svg3.append('g').attr('transform', "translate(0," + (h - padding) + ")").attr('class', 'main axis date1').call(xAxis);
+		svg3.append('g').attr("transform", "translate(" + padding + ",0)").attr('class', 'main axis date2').call(yAxis);
+		
+		//bad
+		svg3.selectAll(".point").data(data).enter().append('path').filter(function(d){ return d.quality<6 })
+		.attr("d", d3.svg.symbol().type("circle") .size(function(d){ return 1000/(d.pH*d.alcohol); }))
+		.attr("transform", function(d) {  var crossa=x(d.alcohol);	  var crossb=y(d.pH); return "translate(" + crossa + "," + crossb+ ")"; }) .style('stroke', 'red') .style('fill','none') .attr('stroke-width',1);
+		
+		//good
+		svg3.selectAll(".point").data(data).enter().append('path') .filter(function(d){ return d.quality>=6 })
+		.attr("d", d3.svg.symbol().type("cross").size(function(d){ return 1000/(d.pH*d.alcohol); })) 
+		.attr("transform", function(d) {   var crossx=x(d.alcohol);	  var crossy=y(d.pH); return "translate(" + crossx + "," + crossy+ ")"; }).style('stroke', 'blue').style('fill','none').attr('stroke-width',1);
+      
+	  
+	  
+		svg3.append("text").attr("dx", "1em").attr("transform","translate(" + (w/2) + " ," +( h-padding/3) + ")").style("text-anchor", "middle")
+      .text("Alcohol");//Xaxis
+	  
+		svg3.append("text").attr("transform", "rotate(-90)").attr("dx", "1em").attr("y", padding/3).attr("x",-w/2+padding).style("text-anchor", "middle")
+      .text("pH");//Yaxis
+	  
+	  svg3.append("text").attr("x", (w/ 2)).attr("y", padding/3 ).attr("text-anchor", "middle").style("font-size", "16px").style("text-decoration", "underline")  
+        .text("GRAPH 3: pH vs. Alcohol (Scaled Symbols)");
+		
+		
+		
+		var symbol31=d3.svg.symbol().size(100).type("cross");
+		svg3.append('path').attr('d',symbol31).style('stroke', 'blue').style('fill','none')
+		.attr("transform", function(d) {return "translate(" + 600 + "," + 10+ ")"; }) ;
+	var symbol32=d3.svg.symbol().size(100).type("circle");
+		svg3.append('path').attr('d',symbol32).style('stroke', 'red').style('fill','none')
+		.attr("transform", function(d) {return "translate(" + 600 + "," + 30+ ")"; }) ;
+	 svg3.append("text").attr("x", 630).attr("y", 15 ).attr("text-anchor", "middle").style("font-size", "16px")  
+        .text("Good");
+	svg3.append("text").attr("x", 630).attr("y", 35 ).attr("text-anchor", "middle").style("font-size", "16px")  
+        .text("Bad");
+		
+		
+		
+		//*/ //4
+		
+		var svg4=d3.select("body").append("svg").attr("width",w).attr("height",h);
+		
+		var x1 = d3.scale.linear().domain([0,4]).range([ padding,w-padding*2]);
+		var y1 = d3.scale.sqrt().domain([0.1,2]).range([ h-padding,padding]);
+		
+		var xAxis_4 = d3.svg.axis().scale(x1).orient('bottom');
+		var yAxis_4 = d3.svg.axis().scale(y1).orient('left');
+		
+		svg4.append('g').attr('transform', "translate(0," + (h - padding) + ")").attr('class', 'main axis date1').call(xAxis_4);
+		svg4.append('g').attr("transform", "translate(" + padding + ",0)").attr('class', 'main axis date2').call(yAxis_4);
+		
+		//bad
+		svg4.selectAll(".point").data(data).enter().append('path').filter(function(d){ return d.quality<6 }).attr("d", d3.svg.symbol().type("circle") .size(function(d){ return 100; }))
+		.attr("transform", function(d) {  
+		var crossa=x1(d.pH);	  
+		var crossb=y1(d.sulphates); 
+		return "translate(" + crossa + "," + crossb+ ")"; }) .style('stroke', 'red') .style('fill','none') .attr('stroke-width',1);
+		
+		//good
+		svg4.selectAll(".point").data(data).enter().append('path') .filter(function(d){ return d.quality>=6 }).attr("d", d3.svg.symbol().type("cross").size(function(d){ return 100; })) .attr("transform", function(d) {   
+		var crossx=x1(d.pH); 
+		var crossy=y1(d.sulphates);
+		return "translate(" + crossx + "," + crossy+ ")"; }).style('stroke', 'blue').style('fill','none').attr('stroke-width',1);
+          
+  
+	svg4.append("text").attr("dx", "1em").attr("transform","translate(" + (w/2) + " ," +( h-padding/3) + ")").style("text-anchor", "middle")
+      .text("pH");//Xaxis
+	  
+		svg4.append("text").attr("transform", "rotate(-90)").attr("dx", "1em").attr("y", padding/3).attr("x",-w/2+padding).style("text-anchor", "middle")
+      .text("Sulphate");//Yaxis
+	   
+	svg4.append("text").attr("x", (w/ 2)).attr("y", padding/3 ).attr("text-anchor", "middle").style("font-size", "16px").style("text-decoration", "underline")  
+        .text("GRAPH 4: Sulphates vs. pH (square-root-scaled)");
+		
+	  
+	  
+	  var symbol41=d3.svg.symbol().size(100).type("cross");
+		svg4.append('path').attr('d',symbol41).style('stroke', 'blue').style('fill','none')
+		.attr("transform", function(d) {return "translate(" + 600 + "," + 10+ ")"; }) ;
+	var symbol42=d3.svg.symbol().size(100).type("circle");
+		svg4.append('path').attr('d',symbol42).style('stroke', 'red').style('fill','none')
+		.attr("transform", function(d) {return "translate(" + 600 + "," + 30+ ")"; }) ;
+	 svg4.append("text").attr("x", 630).attr("y", 15 ).attr("text-anchor", "middle").style("font-size", "16px")  
+        .text("Good");
+	svg4.append("text").attr("x", 630).attr("y", 35 ).attr("text-anchor", "middle").style("font-size", "16px")  
+        .text("Bad");
+	  
+	  
+	  
+		//*/ //5
+		
+		var svg5=d3.select("body").append("svg").attr("width",w).attr("height",h);
+		
+		var x2 = d3.scale.linear().domain([0,4]).range([ padding,w-padding*2]);
+		var y2 = d3.scale.log().base(Math.E).domain([0.1,2]).range([ h-padding,padding]);
+		
+		var xAxis_5 = d3.svg.axis().scale(x2).orient('bottom');
+		var yAxis_5 = d3.svg.axis().scale(y2).orient('left');
+		
+		svg5.append('g').attr('transform', "translate(0," + (h - padding) + ")").attr('class', 'main axis date1').call(xAxis_5);
+		svg5.append('g').attr("transform", "translate(" + padding + ",0)").attr('class', 'main axis date2').call(yAxis_5);
+		
+		//bad
+		svg5.selectAll(".point").data(data).enter().append('path').filter(function(d){ return d.quality<6 }).attr("d", d3.svg.symbol().type("circle") .size(function(d){ return 100; }))
+		.attr("transform", function(d) {  
+		var crossa=x2(d.pH);	  
+		var crossb=y2(d.sulphates); 
+		return "translate(" + crossa + "," + crossb+ ")"; }) .style('stroke', 'red') .style('fill','none') .attr('stroke-width',1);
+		
+		//good
+		svg5.selectAll(".point").data(data).enter().append('path') .filter(function(d){ return d.quality>=6 }).attr("d", d3.svg.symbol().type("cross").size(function(d){ return 100; })) .attr("transform", function(d) {   
+		var crossx=x2(d.pH); 
+		var crossy=y2(d.sulphates);
+		return "translate(" + crossx + "," + crossy+ ")"; }).style('stroke', 'blue').style('fill','none').attr('stroke-width',1);
+      
+	  svg5.append("text").attr("dx", "1em").attr("transform","translate(" + (w/2) + " ," +( h-padding/3) + ")").style("text-anchor", "middle")
+      .text("pH");//Xaxis
+	  
+		svg5.append("text").attr("transform", "rotate(-90)").attr("dx", "1em").attr("y", padding/3).attr("x",-w/2+padding).style("text-anchor", "middle")
+      .text("Sulphate");//Yaxis
+	   
+	svg5.append("text").attr("x", (w/ 2)).attr("y", padding/3 ).attr("text-anchor", "middle").style("font-size", "16px").style("text-decoration", "underline")  
+        .text("GRAPH 5: Sulphates vs. pH (log-scaled)");
+		
+	var symbol51=d3.svg.symbol().size(100).type("cross");
+		svg5.append('path').attr('d',symbol51).style('stroke', 'blue').style('fill','none')
+		.attr("transform", function(d) {return "translate(" + 600 + "," + 10+ ")"; }) ;
+	var symbol52=d3.svg.symbol().size(100).type("circle");
+		svg5.append('path').attr('d',symbol52).style('stroke', 'red').style('fill','none')
+		.attr("transform", function(d) {return "translate(" + 600 + "," + 30+ ")"; }) ;
+	 svg5.append("text").attr("x", 630).attr("y", 15 ).attr("text-anchor", "middle").style("font-size", "16px")  
+        .text("Good");
+	svg5.append("text").attr("x", 630).attr("y", 35 ).attr("text-anchor", "middle").style("font-size", "16px")  
+        .text("Bad");
+	  
+	  
+	  
+	console.log(d3.max(data,function(d){return d.sulphates}));
+	console.log(d3.min(data,function(d){return d.sulphates}));
+//*/ //5end
+	
+		
+	});	
+	
+		
+
+        </script>
+	
+    </body>
+
+
+</html> 

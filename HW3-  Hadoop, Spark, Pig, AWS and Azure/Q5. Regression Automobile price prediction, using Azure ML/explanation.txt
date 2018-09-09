@@ -1,0 +1,2 @@
+q2.Cleaning data is beneficial because invalid data wont contributing to sum, but contributes to the entry count which gives false averages (sum/count), thus false errors. 
+q3.For the 3rd metric, the neural network regression model is used. The model is trying to estimate a relatively random parameter, and the default learning rate (0.0001) is too slow to learn in the given time. This leads to a relatively large error and a poor prediction score.

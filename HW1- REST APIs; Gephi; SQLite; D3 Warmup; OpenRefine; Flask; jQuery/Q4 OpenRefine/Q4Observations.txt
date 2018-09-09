@@ -1,0 +1,6 @@
+c)i.a:	47
+c)i.b:	5
+c)ii:		562
+c)iii:	if(isNull(value),replace("","","Unbanded"),value)
+c)iv:		if(value.toNumber()>100,1,0)
+c)v:		if(or(indexOf(value,"discount")!=-1,indexOf(value,"offer")!=-1,indexOf(value,"sale")!=-1),1,0)

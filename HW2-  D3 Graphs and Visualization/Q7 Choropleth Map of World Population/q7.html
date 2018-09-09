@@ -1,0 +1,145 @@
+<html>
+
+<meta charset="utf-8">
+
+<style>
+.axis path,
+			.axis line{fill:none;stroke:none;shape-rendering:crispEdges;}
+.tip{background: rgba(0, 0, 0, 0.6);
+padding:10px;
+    }		
+.details{color:white;}
+.title{color:#fec44f;}	
+.legend{stroke:black;}	
+	</style>
+<body>
+<script type="text/javascript" src="../lib/d3.v3.min.js"></script>
+<script type="text/javascript" src="../lib/d3-queue.v3.min.js"></script>
+<script type="text/javascript" src="../lib/topojson.v1.min.js"></script>
+<script type="text/javascript" src="../lib/d3.tip.v0.6.3.js"></script>
+
+
+<script type="text/javascript">
+var margin = {top: 20, right: 20, bottom: 20, left: 20},
+    width = 1100 - margin.right - margin.left,
+    height = 800 - margin.top - margin.bottom;
+
+var format1 = d3.format(",");
+
+//referenced from: http://bl.ocks.org/micahstubbs/01529b106c93f9b649c4006de5c79b80
+var tip = d3.tip().attr('class','tip')
+            .offset([-10, 0])
+            .html(function(d,literacy) {
+//			console.log(d);
+              return "<strong class='title'>Country: </strong><span class='details'>" 
+			  + d.properties.name + "<br></span>" 
+			  + "<strong class='title'>Population: </strong><span class='details'>" 
+			  + format1(d.population) +"<br></span>"
+              + "<strong class='title'>Literacy: </strong><span class='details'>" 
+			  + literacy +"</span>";
+			})
+
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width)
+    .attr("height", height)
+    .append("g").attr('class','canvas');
+	
+//referenced from http://bl.ocks.org/almccon/6ab03506d2e3ff9d843f69fa2d5c29cf
+var path = d3.geo.path();
+var projection = d3.geo.mercator().translate( [width / 2, height / 1.6]).scale(140);
+
+var path = d3.geo.path().projection(projection);
+var intervals=[
+1e4,
+1e5,
+1e5,
+1e6,
+5e6,
+1e7,
+5e7,
+1e8,
+5e8,
+1e9];
+
+
+function colorscale(id){
+
+var x = d3.scale.threshold()
+	.domain(intervals)
+    .range(["#ffffe5", "#fff7bc", "#fee391", "#fec44f", "#fe9929", "#ec7014","#cc4c02","#993404","#662506","#000"]);
+//console.log(x(id));
+return x(id);
+	}
+svg.call(tip);
+d3.queue()
+    .defer(d3.json, "world_countries.json")
+    .defer(d3.tsv, "world_population.tsv")
+	.defer(d3.tsv, "literacy_rate.tsv")
+    .await(ready);
+
+function ready(error, data, population,Rate) {
+ var ID = {};
+ var literacy={};
+  population.forEach(function(d) 
+  { ID[d.id] = +d.population; });
+  data.features.forEach(function(d) 
+  { d.population = ID[d.id]; 
+  });
+  Rate.forEach(function(d) 
+  {
+  literacy[d.id]= +d.Rate;
+//  d.literacy=literacy[d.id];
+  console.log(literacy); 
+  });
+  
+
+
+  svg.append("g")
+  .selectAll("path")
+      .data(data.features)
+    .enter().append("path")
+      .attr("d", path)
+ .style("fill",function(d){return colorscale(ID[d.id]);}).style("opacity",0.8)
+  .on('mouseover',function(d){  tip.show(d,literacy[d.id]);d3.select(this).style("opacity", 1); })
+  .on('mouseout' ,function(d){  tip.hide(d,literacy[d.id]);d3.select(this).style("opacity", 0.8);});
+  
+
+  svg.append("path")
+      .datum(topojson.mesh(data.features, function(a, b) { return a.id !== b.id; }))
+      .attr("d", path);
+ 	  
+   }
+   var legend = svg.selectAll(".legend").data(intervals).enter().append("g")
+      .attr("class", "legend")
+      .attr("transform", function(d, i) 
+	  {//console.log(d); 
+	  return "translate(" + (i*45+500) + "," + (height-150) + ")"; 
+	  });
+	
+	legend.append("rect")
+      .attr("width", 45)
+      .attr("height", 20).style("opacity",0.8)
+      .style("fill", function(d,i){return colorscale(intervals[i]-1)});
+	
+var x1 = d3.scale.ordinal()
+.domain([0,1e4,1e5,1e5,1e6,5e6,1e7,5e7,1e8,5e8,1e9]).rangePoints([500,width-150]);
+
+//intervals,function(d,i){return intervals[i];}
+var xAxis = d3.svg.axis().scale(x1).ticks(11);
+svg.append('g').attr('class','axis')
+.attr("transform", "translate(0," +(height-135)+ ")")
+.attr('class', 'axis')
+.call((xAxis).tickFormat(d3.format("s")));
+
+			
+	
+	  svg.append("text")
+      .attr("x", width-400)
+      .attr("y", height-160).text("SCALE").style("font", "15px Arial Black")
+	  ;
+   
+
+    </script>
+	</body>
+	</html>

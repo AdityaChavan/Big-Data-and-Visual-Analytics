@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<style>
+.axis path,
+			.axis line{fill:none;stroke:none;shape-rendering:crispEdges;}
+			.axis text{font-family:sans-serif;font-size:1em;}
+.axis1 line{fill:none;}
+</style>
+<body>
+<script type="text/javascript" src="../lib/d3.v3.min.js"></script>
+
+<script> //importing data 
+var data=
+[{franchise:'Harry Potter', 			revenue: {1:974, 2:878, 3:796, 4:896, 5:942, 6:935, 7:960, 8:1341 }},
+ {franchise:'Transformers', 			revenue: {1:708, 2:836, 3:1123, 4:1104, 5:603 }},
+ {franchise:'Mission Impossible', 		revenue: {1:457, 2:549, 3:397, 4:694, 5:700 }},
+ {franchise:'Fast and the Furious', 	revenue: {1:206, 2:236, 3:363, 4:363, 5:629, 6:789, 7:1516, 8:1237 }},
+ {franchise:'Hunger Games', 			revenue: {1:677, 2:864, 3:766, 4:650 }},
+ {franchise:'Pirates of the Caribbean',	revenue: {1:634, 2:1066, 3:963, 4:1045, 5:794 }}];</script>
+<script>
+var margin = {top: 20, right: 20, bottom: 50, left: 20},
+    width = 1000 - margin.right - margin.left,
+    height = 600 - margin.top - margin.bottom;
+
+var svg = d3.select("body").append("svg")
+    .attr("width", width + margin.right + margin.left)
+    .attr("height", height + margin.top + margin.bottom)
+    .append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+//	console.log(data[1].revenue);
+	
+		//the scale for the main bar graphs
+		var y = d3.scale.linear().domain([6,1]).range([ height-margin.bottom-105,margin.top+5]);
+		
+		var yAxis = d3.svg.axis().scale(y).tickFormat(function(d,i) { return data[i].franchise; }).orient('left').ticks(6);
+		var total=0;
+		svg.append('g').attr("transform", "translate(" + (margin.left+150)+ ",0)").attr('class', 'axis').call(yAxis);
+		var bars=svg.append('g').selectAll('rect')
+							.data(data)
+							//.data(data)
+							.enter()
+							.append('rect')
+							.attr('height',50)
+							.attr('x',margin.left+150)
+							.attr('y',function(d,i){return 70*i;} )
+							.style('fill',function(d,i){ return "blue"; })
+							.attr('width',function(d,i){return total1(data,i)/15})
+							.on("mouseover", handleMouseOver)
+							.on("mouseout", handleMouseOut);
+var max=0;//max=max of data, for the line graph axis
+	function total1(data,i){
+							var total1=0;
+							//delete data[i].revenue[1];
+							max=0;
+							//temp.each(function(data,i){console.log(this);});
+							for(var j=1;j<9;j++)
+							{//console.log(data[i].revenue[j])
+							if(data[i].revenue[j]!=null)
+							total1+=data[i].revenue[j];
+							if(max<data[i].revenue[j])
+							max=data[i].revenue[j];
+							}
+							//console.log(total1);					
+							
+							return total1;
+							}//*/
+
+
+	svg.selectAll('bars').data(data).enter().append("text")
+	.attr("x", function(d){return 160+margin.left;})
+	.attr("y",function(d,i){return margin.top+10+70*i;})
+	.style("fill","white")
+    .text(function(d,i){return "$"+total1(data,i)}).style("font", "15px Arial")
+	.on("mouseover", handleMouseOver)
+	.on("mouseout", handleMouseOut);
+	
+	
+	  
+		
+var local;		
+function handleMouseOut(d,i){
+local=this;
+if(this.localName=='rect')
+d3.select(local).style("fill",function(d,i){return "blue";});
+removegraph(this);
+}
+function handleMouseOver(d,i){
+
+if(this.localName!='rect')
+d3.select(local).style("fill",function(d,i){return "gray";});
+if(this.localName=='rect'){local=this;
+d3.select(this).style("fill",function(d,i){return "gray";});
+}
+addgraph(this,i);
+}		
+var maxpoint;
+function addgraph(d,i) {
+max=0;
+
+		for(var j=1;j<9;j++){//console.log(data[i].revenue[j])
+							if(data[i].revenue[j]!=null)
+							{maxpoint=j;
+							if(max<data[i].revenue[j])
+							max=data[i].revenue[j];
+							}}
+							
+	var x2 = d3.scale.linear().domain([1,maxpoint]).range([ width-220,width-25]);
+	var y2 = d3.scale.linear().domain([0,max]).range([ height-165,202]);
+	var x1 = d3.scale.linear().domain([1,maxpoint]).range([ width-200,width]);
+	var y1 = d3.scale.linear().domain([0,max]).range([ height-145,220]);
+	var xAxis1 = d3.svg.axis().scale(x1).orient('bottom').tickFormat(d3.format("d"));
+	var yAxis1 = d3.svg.axis().scale(y1).orient('left').tickFormat(d3.format("d"));
+	
+	svg.append('g').attr("id","xx")
+	.attr('transform', "translate(0," + (height-150 ) + ")").attr('class', 'axis1').call(xAxis1);
+	
+	
+	svg.append('g').attr("id","yx")
+	.attr("transform", "translate(" + (width-200)+ ",0)").attr('class', 'axis1').call(yAxis1);
+	var count=0;
+	var count1=-1;
+	
+	var data1=0;
+	data1=d.__data__.revenue;
+//	console.log(data1);
+	
+	var line = d3.svg.line()
+	.x(function(d,j) { return x2(j+1); })
+	.y(function(d) { 
+	count=count+1;
+	if(data[i].revenue[count]!=null){
+	return (y2(data[i].revenue[count])); 
+	}
+//	return 200;
+	});
+	
+	var line1 = d3.svg.line()
+	.x(function(d,j) { return x2(j+5); })
+	.y(function(d,j) { 
+	if(data[i].revenue[j+5]<2000&&data[i].revenue[j+5]>1){
+//	console.log(data[i].revenue[j+5]);
+	return (y2(data[i].revenue[j+5])); 
+	}
+//	return 200;
+	});
+	
+svg.append("g")
+	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+	.append("path").attr("id","graph")
+    .datum(data)
+    .attr("fill", "none")
+    .attr("stroke", "steelblue")
+    .attr("stroke-linejoin", "round")
+    .attr("stroke-linecap", "round")
+    .attr("stroke-width", 1.5)
+    .attr("d", line);
+	//*/
+	svg.append("g")
+	.attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+	.append("path").attr("id","graph")
+    .datum(data)
+    .attr("fill", "none")
+    .attr("stroke", "steelblue")
+    .attr("stroke-linejoin", "round")
+    .attr("stroke-linecap", "round")
+    .attr("stroke-width", 1.5)
+    .attr("d", line1);
+	
+	
+}
+function removegraph(d,i){
+//console.log(d);
+svg.selectAll("#xx").remove();
+svg.selectAll("#yx").remove();
+svg.selectAll("#graph").remove();
+
+}
+</script>

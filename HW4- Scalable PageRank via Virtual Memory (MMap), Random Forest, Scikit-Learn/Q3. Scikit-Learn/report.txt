@@ -1,0 +1,83 @@
+
+****************************************
+Part A
+
+Linear Regression - 
+	Training Accuracy: 0.924180
+	Testing Accuracy: 0.803336
+
+SVM -
+	Training Accuracy: 1.0
+	Testing Accuracy: 0.803775
+
+MLP - 
+	Training Accuracy: 0.730533
+	Testing Accuracy: 0.785777
+
+Random Forest - 
+	Training Accuracy: 0.996926
+	Testing Accuracy: 0.948200
+
+****************************************
+Part B - Hyperparameter tuning
+
+Random Forest - 
+	n_estimators: 
+		What it does (at most 25 words):This metric provides number of trees created in the forest. A higher number of trees makes the code slower and more accurate.
+		Values tested (at least 3): 10,100,100
+
+	max_depth: 
+		What it does:This metric provides the maximum depth of any tree created. The more depth a tree has, the slower and more accurate it will be.
+		Values tested (at least 3): 100,150,200
+		
+	Best combination of parameter values:
+		n_estimators: 30
+		max_depth: 200
+
+	Testing Accuracy before tuning (default parameters): 0.948200
+	Testing Accuracy after tuning: 0.954918
+
+
+SVM -
+	Kernels: 
+		What it does: The linear kernel implements linear regression and the RBF kernel implements the radial bias function. Since the data is linear, the former is more accurate
+		Values tested: rbf, linear
+	C: 
+		What it does: This metric provides the penalty parameter of the error term. For smaller values of C, the algorithm is more finely tuned and is more accurate. 
+		Values tested (at least 3): 0.001,0.1,10
+		
+	Best combination of parameter values: 
+		Kernel: linear
+		C: 0.001
+	
+	Testing Accuracy before tuning  (default parameters): 0.803775
+	Testing Accuracy after tuning: 0.821721
+
+
+****************************************
+Part C
+
+For your SVM's CV run from part B, state the highest mean testing accuracy 
+across the sets of parameter values and its corresponding mean train score and mean fit time. 
+
+SVM's highest mean testing/cross-validated accuracy: 82%
+SVM's mean train score: 82%
+SVM's mean fit time: 0.0593 sec
+
+****************************************
+Part D
+
+Tuned SVM's testing accuracy BEFORE preprocessing: 0.803775
+Tuned SVM's testing accuracy AFTER preprocessing: 0.818648
+Why you think it increased, decreased, or stayed the same: The StandardScaler was used, which removed the mean from the data and scaled data to unit variance. As x_test had its values near its mean removed, this made the sorting easier for the classifier, which was able to increase its overall accuracy on the new data.
+
+****************************************
+Part E
+
+Best Classifier: Random Forest
+Why: The Random Forest classifier works best for given data, giving an accuracy of 95% at times. This is because the data exhibits a large variance and is relatively non-linear, giving it an edge over SVM and linear respectively. Its much quicker than SVM, as it uses the data as is.
+
+
+
+
+
